@@ -15,17 +15,19 @@ var questionsArray = [
 
 ];
 var question = 0;
-var countDown = 30;
+var countDown = 31;
 var correctAnswer = 0;
 var incorrectAnswer = 0;
 var unAnswer = 0;
 var userPick;
 var gameQa = question
 var counterFunction;
+var userScore = 0;
 var counterDisplay = $('#counter');
 var startButton = $('#startButton');
 var countPlacement = $('#count-placement');
 var questionPlacement = $('#question-placement');
+var userScoreElement = $('#userscore');
 
 
 startButton.click(function (event) {
@@ -35,16 +37,27 @@ startButton.click(function (event) {
     gameQuestions();
 });
 
-function run() {
-}
-
 function decrement() {
     countDown--;
     counterDisplay.html(countDown + " Seconds");
-    if (countDown === 0) {
+    if (countDown === 0 || isUserDone()) {
         stop();
+        questionPlacement.toggle();
+        counterDisplay.toggle();
+        countPlacement.toggle();
+        checkUserAnswers();
+        scoreBoared();
     };
 };
+
+function scoreBoared() {
+    var scoreToShow = userScore + " points!!";
+    if (userScore == 1) {
+        scoreToShow = userScore + " point!!";
+    }
+    userScoreElement.append(scoreToShow);
+    userScoreElement.toggle("slow");
+}
 
 function gameQuestions() {
     $.each(questionsArray, function (i, currentQuestion) {
@@ -52,38 +65,38 @@ function gameQuestions() {
     });
 }
 
+function checkUserAnswers() {
+    $.each(questionsArray, function (i, question) {
+        var userValue = $('input[name=' + i + ']:checked').val();
+        if (userValue == question.a) {
+            userScore++;
+        }
+    })
+}
+
 function displayQuestion(question, i) {
     var formatQuestion = '<div class="questioncontainer"><p class="question" id="q' + i + ' " >' + question.q + '</p>';
-    $.each(question.c, function(y, choice) {
-        formatQuestion += '<input type="radio" class="choice" id="q'+ i +'" name="'+i+'" value="'+y+'"> ' + choice + '<br> ';
+    $.each(question.c, function (y, choice) {
+        formatQuestion += '<input type="radio" class="choice" id="q' + i + '" name="' + i + '" value="' + y + '"> ' + choice + '<br> ';
     })
     formatQuestion += '</div><br><hr>'
     questionPlacement.append(formatQuestion);
 }
 
-function timeUp() {
-    // in the element with an id of time-left add an h2 saying Time's Up!
-    // console log done
-    console.log("done");
-    $("#time-left").append("<h2>Time's Up!</h2>");
-    console.log("time is up");
-
-    //  The following line will play the audio file we linked to above:
-    audio.play();
+function isUserDone() {
+    var questionsCount = questionsArray.length;
+    var answeredQuestions = 0;
+    $.each(questionsArray, function (i, question) {
+        if ($('input[name=' + i + ']:checked').val()) {
+            answeredQuestions++;
+        }
+    })
+    if (answeredQuestions == questionsCount) {
+        return true;
+    }
+    return false;
 }
-
-
 
 function stop() {
     clearInterval(counterFunction);
 };
-
-
-
-
-
-$(function () {
-    //  Execute the run function.
-    run();
-});
-
