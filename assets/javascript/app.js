@@ -15,14 +15,13 @@ var questionsArray = [
 
 ];
 var question = 0;
-var countDown = 31;
+var countDown = 3;
 var correctAnswer = 0;
 var incorrectAnswer = 0;
-var unAnswer = 0;
+var unAnswered = 0;
 var userPick;
 var gameQa = question
 var counterFunction;
-var userScore = 0;
 var counterDisplay = $('#counter');
 var startButton = $('#startButton');
 var countPlacement = $('#count-placement');
@@ -30,18 +29,19 @@ var questionPlacement = $('#question-placement');
 var userScoreElement = $('#userscore');
 
 
-startButton.click(function (event) {
+startButton.click(function (event) { //hide button on click
     $(this).toggle();
     countPlacement.toggle();
     counterFunction = setInterval(decrement, 1000);
     gameQuestions();
+
 });
 
-function decrement() {
+function decrement() { // timer 
     countDown--;
     counterDisplay.html(countDown + " Seconds");
     if (countDown === 0 || isUserDone()) {
-        stop();
+        stop();  // when stop hide the above
         questionPlacement.toggle();
         counterDisplay.toggle();
         countPlacement.toggle();
@@ -51,9 +51,9 @@ function decrement() {
 };
 
 function scoreBoared() {
-    var scoreToShow = userScore + " points!!";
-    if (userScore == 1) {
-        scoreToShow = userScore + " point!!";
+    var scoreToShow = correctAnswer + " points!!";
+    if (correctAnswer == 1) {
+        scoreToShow = correctAnswer + " point!!";
     }
     userScoreElement.append(scoreToShow);
     userScoreElement.toggle("slow");
@@ -69,8 +69,15 @@ function checkUserAnswers() {
     $.each(questionsArray, function (i, question) {
         var userValue = $('input[name=' + i + ']:checked').val();
         if (userValue == question.a) {
-            userScore++;
+            correctAnswer++;
         }
+        if (userValue && userValue !== question.a) {
+            incorrectAnswer++;
+        }
+        if(!userValue){
+            unAnswered++;
+        }
+
     })
 }
 
