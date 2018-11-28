@@ -9,7 +9,7 @@ var questionsArray = [
     { q: "On which planet do we first meet Rey in The Force Awakens?", a: 0, c: ["Jakku", "Tatooine", "Dantooine", "Farax"] }
 ];
 var question = 0;
-var countDown = 5;
+var countDown = 31;
 var correctAnswer = 0;
 var incorrectAnswer = 0;
 var unAnswered = 0;
