@@ -1,0 +1,110 @@
+var questionsArray = [
+    { q: "Which of these last names does Leia NOT have a family connection to?", a: 0, c: ["Fett", "Amidala", "Skywalker", "Organa"] },
+    { q: "What color lasers do Tie Fighters shoot?", a: 3, c: ['Red', 'Blue', "Orange", "Green"] },
+    { q: "How old was Yoda when he Passed?", a: 0, c: ["900", "800", "700", "1,000"] },
+    { q: "How old was Padme when she became Queen?", a: 0, c: ["14", "16", "12", "21"] },
+    { q: "What color Lasers do X-Wings Shoot?", a: 2, c: ["Green", "Orange", "Red", "Blue"] },
+    { q: "Han Solo Obtain what rank during the Galactic Cival War?", a: 1, c: ["Commander", "General", "Admiral", "Captin"] },
+    { q: "Who played Princess Leia?", a: 3, c: ["Jessica Alba", "Linda Hammilton", "Sigourney Weaver", "Carrie Fisher"] },
+    { q: "On which planet do we first meet Rey in The Force Awakens?", a: 0, c: ["Jakku", "Tatooine", "Dantooine", "Farax"] }
+];
+var question = 0;
+var countDown = 31;
+var correctAnswer = 0;
+var incorrectAnswer = 0;
+var unAnswered = 0;
+var userPick;
+var gameQa = question
+var counterFunction;
+var counterDisplay = $('#counter');
+var startButton = $('#startButton');
+var countPlacement = $('#count-placement');
+var questionPlacement = $('#question-placement');
+var userScoreElement = $('#userscore');
+var userIncorrectElement = $('#userincorrect');
+var userUnansweredElement = $('#userunanswered');
+
+startButton.click(function (event) { //hide button on click
+    $(this).toggle();
+    countPlacement.toggle();
+    counterFunction = setInterval(decrement, 1000);
+    gameQuestions();
+});
+
+function decrement() { // timer 
+    countDown--;
+    counterDisplay.html(countDown + " Seconds");
+    if (countDown === 0 || isUserDone()) {
+        stop();  // when stop hide below
+        questionPlacement.toggle();
+        counterDisplay.toggle();
+        countPlacement.toggle();
+        checkUserAnswers();
+        scoreBoared();
+    };
+};
+
+function scoreBoared() { // append correct/incorrect and unanswered score
+    var scoreToShow = correctAnswer + " correct points!!";
+    if (correctAnswer == 1) {
+        scoreToShow = correctAnswer + " correct point!!";
+    }
+    userScoreElement.append(scoreToShow);
+    userScoreElement.toggle("slow");
+
+    var incorrectToShow = incorrectAnswer + " questions.";
+    userIncorrectElement.append(incorrectToShow);
+    userIncorrectElement.toggle("slow");
+
+    var scoreUnanswered = unAnswered + " questions.";
+    userUnansweredElement.append(scoreUnanswered);
+    userUnansweredElement.toggle("slow");
+}
+
+function gameQuestions() {
+    $.each(questionsArray, function (i, currentQuestion) {
+        displayQuestion(currentQuestion, i);
+    });
+}
+
+function checkUserAnswers() {
+    $.each(questionsArray, function (i, question) { // for each array question
+        var userValue = $('input[name=' + i + ']:checked').val();
+        if (userValue == question.a) {
+            correctAnswer++;
+        }
+        if (userValue && userValue !== question.a) {
+            incorrectAnswer++;
+        }
+        if (!userValue) {
+            unAnswered++;
+        }
+    })
+}
+
+function displayQuestion(question, i) {
+    var formatQuestion = '<div class="questioncontainer"><p class="question" id="q' + i + ' " >' + question.q + '</p>';
+    $.each(question.c, function (y, choice) {
+        formatQuestion += '<input type="radio" class="choice" id="q' + i + '" name="' + i + '" value="' + y + '"> ' + choice + '<br> ';
+    })
+    formatQuestion += '</div><br><hr>'
+    questionPlacement.append(formatQuestion);
+}
+
+function isUserDone() {
+    var questionsCount = questionsArray.length;
+    var answeredQuestions = 0;
+    $.each(questionsArray, function (i, question) {
+        if ($('input[name=' + i + ']:checked').val()) {
+            answeredQuestions++;
+        }
+    })
+    if (answeredQuestions == questionsCount) {
+        return true;
+    }
+    return false;
+}
+
+function stop() {
+    clearInterval(counterFunction);
+};
